@@ -1,0 +1,56 @@
+local function createNametag(player)
+    local nametag = Instance.new("BillboardGui")
+    nametag.Name = "Nametag"
+    nametag.Size = UDim2.new(0, 100, 0, 20)
+    nametag.Adornee = player.Character:WaitForChild("Head")
+    nametag.AlwaysOnTop = true
+    nametag.StudsOffset = Vector3.new(0, 3, 0)
+
+    local textLabel = Instance.new("TextLabel", nametag)
+    textLabel.Text = player.Name
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.TextColor3 = Color3.new(1, 1, 1)
+    textLabel.BackgroundTransparency = 1
+    textLabel.Font = Enum.Font.SourceSans
+    textLabel.TextSize = 14
+
+    nametag.Parent = game.Workspace.CurrentCamera
+
+    -- Highlighting effect
+    local highlight = Instance.new("BoxHandleAdornment")
+    highlight.Name = "Highlight"
+    highlight.Size = Vector3.new(2, 4, 2)
+    highlight.Color3 = Color3.fromRGB(0, 255, 0) -- Change the color as needed
+    highlight.Adornee = player.Character:WaitForChild("Head")
+    highlight.AlwaysOnTop = true
+    highlight.Transparency = 0.5
+
+    highlight.Parent = player.Character
+end
+
+local function removeNametag(player)
+    local nametag = game.Workspace.CurrentCamera:FindFirstChild(player.Name)
+    if nametag then
+        nametag:Destroy()
+    end
+
+    local highlight = player.Character:FindFirstChild("Highlight")
+    if highlight then
+        highlight:Destroy()
+    end
+end
+
+game.Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        wait(1) -- Wait for character to load fully
+        createNametag(player)
+    end)
+end)
+
+game.Players.PlayerRemoving:Connect(function(player)
+    removeNametag(player)
+end)
+
+for _, player in ipairs(game.Players:GetPlayers()) do
+    createNametag(player)
+end 
